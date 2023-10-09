@@ -9,10 +9,13 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@lunchboxfi/sdk": "^0.1.14",
+    "@lunchboxfi/sdk": "^0.1.15",
     "@solana/spl-token": "^0.3.8",
     "@solana/web3.js": "^1.87.0",
     "@sqds/multisig": "^1.10.0",
+    "@supabase/auth-helpers-nextjs": "^0.8.1",
+    "axios": "^1.5.1",
+    "bs58": "^5.0.0",
     "formik": "^2.4.5",
     "next": "13.5.4",
     "react": "^18",

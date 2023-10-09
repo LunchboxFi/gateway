@@ -1,14 +1,17 @@
 import Image from 'next/image'
 import { Inter, Gayathri } from 'next/font/google'
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import { useRouter } from 'next/router';
+import axios from 'axios'
 import * as Yup from 'yup';
 
 const gayathri = Gayathri({ weight: ["100", "400", "700"],subsets: ['latin'] })
 
 export default function Home() {
   const [cardNumber, setCardNumber] = useState('');
+  const [userNonce, setUserNonce] = useState('');
+  const [PIN, setPIN] = useState('');
 
   const router = useRouter();
 
@@ -17,7 +20,7 @@ export default function Home() {
     Token2022
   }
 
-  const { amount, receiver, tokenType, symbol } = router.query;
+  const { amount, receiver, tokenType, symbol, multisigPubkey } = router.query;
 
   // console.log({
   //   amount,
@@ -25,6 +28,13 @@ export default function Home() {
   //   tokenType,
   //   symbol
   // })
+  
+
+ 
+  // useEffect to trigger the POST request when the component mounts
+  // useEffect(() => {
+  //   handleSubmitr();
+  // }, []); 
 
   const handleCardNumberChange = (e: any) => {
     const input = e.target.value;
@@ -37,7 +47,6 @@ export default function Home() {
 
   const CardValidationSchema = Yup.object().shape({
     cardNumber: Yup.string()
-      .matches(/^\d{4} \d{4} \d{4} \d{4}$/, 'Invalid card number')
       .min(16, 'Card number must be 16 characters')
       .required('Card number is required'),
     bump: Yup.string()
@@ -49,9 +58,37 @@ export default function Home() {
   });
   
   
-    const handleSubmit = (values: any, { setSubmitting }: any) => {
+    async function handleSubmit(values: any, { setSubmitting }: any) {
       // Handle form submission here
-      console.log(values);
+      const transferPayload = {
+        userNonce: values.bump,
+        PIN: values.pin,
+        to: receiver,
+        cardNumber: values.cardNumber, 
+        amount: amount, 
+      }
+      console.log(transferPayload)
+      try {
+        // Make a POST request to the server
+        const response = await fetch('/api/transfer/token', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(transferPayload),
+        });
+  
+        if (!response.ok) {
+          console.log(response)
+        }
+  
+        const data = await response.json();
+  
+        // Handle the response as needed
+        console.log('Server response:', data);
+      } catch (error) {
+        console.error('Error sending POST request:', error);
+      }
 
       setSubmitting(false);
     }
@@ -88,7 +125,7 @@ export default function Home() {
 
           <div className='flex flex-row justify-between items-center'>
             <div className='mt-7'>
-              <h3 className='text-lg'>Your bump</h3>
+              <h3 className='text-lg'>Your seed</h3>
               <p className='text-sm text-[#00000080]'>This is the 12 digit character attached to your account</p>
             </div>
             <div className='flex flex-col items-end w-[40%]'>

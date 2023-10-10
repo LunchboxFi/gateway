@@ -2,7 +2,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { transfer} from '@solana/spl-token';
 import { PublicKey } from '@solana/web3.js';
-import { transferSOL, decrypt } from '@lunchboxfi/sdk/lib'
+import { transferSOL, decrypt, fetchMultisigAccount } from '@lunchboxfi/sdk/lib'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { loadWalletKeypair } from '@/utils';
 import { verifyOwnership } from '../verify';
@@ -71,10 +71,11 @@ export default async function handler(
         const advisorKey = advisor[0]?.advisor_privateKey
         const array = bs58.decode(advisorKey)
         const advisorkeypair = loadWalletKeypair(array)
-        console.log(multisigPubkey)
+        console.log("Facksssjdj" + memberOnekeypair.publicKey)
+        console.log("Facksssjdj" + advisorkeypair.publicKey)
         const toPubkey = new PublicKey(to)
         const mPub = new PublicKey(multisigPubkey)
-
+        console.log("fetch:" + fetchMultisigAccount("54qydCkgRmc5XerpqmpjYddCwAUNqD2FN15p2JzXRSfM", "devnet"))
         const signers = [ memberOnekeypair, advisorkeypair ]
         const signature =  await transferSOL("devnet", memberOnekeypair, toPubkey, mPub, amount, signers)
         console.log(signature)

@@ -9,7 +9,8 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@lunchboxfi/sdk": "^0.1.15",
+    "@lottiefiles/react-lottie-player": "^3.5.3",
+    "@lunchboxfi/sdk": "^0.1.16",
     "@solana/spl-token": "^0.3.8",
     "@solana/web3.js": "^1.87.0",
     "@sqds/multisig": "^1.10.0",
@@ -20,6 +21,7 @@
     "next": "13.5.4",
     "react": "^18",
     "react-dom": "^18",
+    "react-loader-spinner": "^5.4.5",
     "yup": "^1.3.2"
   },
   "devDependencies": {

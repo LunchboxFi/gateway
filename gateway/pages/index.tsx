@@ -3,6 +3,7 @@ import { Inter, Gayathri } from 'next/font/google'
 import { useState, useEffect } from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import { useRouter } from 'next/router';
+import { ColorRing } from  'react-loader-spinner'
 import axios from 'axios'
 import * as Yup from 'yup';
 
@@ -12,6 +13,9 @@ export default function Home() {
   const [cardNumber, setCardNumber] = useState('');
   const [userNonce, setUserNonce] = useState('');
   const [PIN, setPIN] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<boolean>(false);
+  const [errorMessage, setErrorMessage] = useState<string>();
 
   const router = useRouter();
 
@@ -22,19 +26,6 @@ export default function Home() {
 
   const { amount, receiver, tokenType, symbol, multisigPubkey } = router.query;
 
-  // console.log({
-  //   amount,
-  //   receiver,
-  //   tokenType,
-  //   symbol
-  // })
-  
-
- 
-  // useEffect to trigger the POST request when the component mounts
-  // useEffect(() => {
-  //   handleSubmitr();
-  // }, []); 
 
   const handleCardNumberChange = (e: any) => {
     const input = e.target.value;
@@ -50,7 +41,7 @@ export default function Home() {
       .min(16, 'Card number must be 16 characters')
       .required('Card number is required'),
     bump: Yup.string()
-      .min(12, 'Bump must be 12 characters')
+      .min(12, 'Bump must be 16 characters')
       .required('Bump is required'),
     pin: Yup.string()
       .matches(/^\d{4}$/, 'PIN must be 4 digits')
@@ -60,6 +51,7 @@ export default function Home() {
   
     async function handleSubmit(values: any, { setSubmitting }: any) {
       // Handle form submission here
+      setLoading(true)
       const transferPayload = {
         userNonce: values.bump,
         PIN: values.pin,
@@ -80,9 +72,18 @@ export default function Home() {
   
         if (!response.ok) {
           console.log(response)
+          setError(true)
+          setErrorMessage("Transaction Failed")
         }
   
         const data = await response.json();
+
+        if (response.ok) {
+          router.push({
+            pathname: "Success",
+            query: { amount, receiver, symbol}
+          });
+        }
   
         // Handle the response as needed
         console.log('Server response:', data);
@@ -91,6 +92,7 @@ export default function Home() {
       }
 
       setSubmitting(false);
+      setLoading(false)
     }
   
 
@@ -103,11 +105,11 @@ export default function Home() {
         <img src='lunnhbox.png' className='w-[80px] h-[80px]' />
         </div>
         <Formik
-      initialValues={{
-        cardNumber: '',
-        bump: '',
-        pin: '',
-      }}
+         initialValues={{
+         cardNumber: '',
+         bump: '',
+         pin: '',
+        }}
       validationSchema={CardValidationSchema}
       onSubmit={handleSubmit}
     >
@@ -126,7 +128,7 @@ export default function Home() {
           <div className='flex flex-row justify-between items-center'>
             <div className='mt-7'>
               <h3 className='text-lg'>Your seed</h3>
-              <p className='text-sm text-[#00000080]'>This is the 12 digit character attached to your account</p>
+              <p className='text-sm text-[#00000080]'>This is the 16 digit character attached to your account</p>
             </div>
             <div className='flex flex-col items-end w-[40%]'>
             <Field
@@ -158,8 +160,20 @@ export default function Home() {
           </div>
 
           <div className='w-[100%] flex justify-center'>
-          <button type='submit' disabled={isSubmitting} className='bg-blue-500 font-main text-white p-3 w-[100%] mt-5 rounded-xl'>
-            Pay {amount} {symbol}
+          <button type='submit' disabled={isSubmitting} className={`${error ?"bg-red-500" : "bg-blue-600"} flex justify-center py-1 font-main text-white  w-[100%] mt-5 rounded-xl`}>
+            {loading ?
+            <ColorRing
+            visible={true}
+            height="40"
+            width="40"
+            ariaLabel="blocks-loading"
+            wrapperStyle={{}}
+            wrapperClass="blocks-wrapper"
+            colors={['#FFFFFF', '#FFFFFF', '#FFFFFF', '#FFFFFF', '#FFFFFF']}
+          /> 
+             : 
+            <span className='p-2'>{error? <span>{errorMessage}</span> : <span>Pay {amount} {symbol}</span>}</span>
+           }
           </button>
           </div>
           

@@ -71,14 +71,19 @@ export default async function handler(
         const advisorKey = advisor[0]?.advisor_privateKey
         const array = bs58.decode(advisorKey)
         const advisorkeypair = loadWalletKeypair(array)
-        console.log("Facksssjdj" + memberOnekeypair.publicKey)
-        console.log("Facksssjdj" + advisorkeypair.publicKey)
+        console.log("memberOne: " + memberOnekeypair.publicKey)
+        console.log("memberTwo: " + advisorkeypair.publicKey)
         const toPubkey = new PublicKey(to)
         const mPub = new PublicKey(multisigPubkey)
-        console.log("fetch:" + fetchMultisigAccount("54qydCkgRmc5XerpqmpjYddCwAUNqD2FN15p2JzXRSfM", "devnet"))
+        console.log("fetch:" + fetchMultisigAccount(multisigPubkey, "devnet"))
         const signers = [ memberOnekeypair, advisorkeypair ]
         const signature =  await transferSOL("devnet", memberOnekeypair, toPubkey, mPub, amount, signers)
         console.log(signature)
+        if(signature) {
+          res.status(200).json({ name: signature })
+        } else {
+          res.status(500).json({ name: "Transaction Failed" })
+        }
        }
         
         
@@ -110,7 +115,7 @@ export default async function handler(
       // const multisigPubkey = new PublicKey("FPr8TrG5Hfp4dFFxA4ZivbBk5PbzDRueoMeXTYSDZWps");
         
       //   
-        res.status(200).json({ name: cardNumber })
+        
       // } else {
       //   // Handle any other HTTP method
       //   res.status(500).json({ name: 'error' })

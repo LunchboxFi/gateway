@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@lottiefiles/react-lottie-player": "^3.5.3",
-    "@lunchboxfi/sdk": "^0.1.16",
+    "@lunchboxfinance/sdk": "^0.1.18",
     "@solana/spl-token": "^0.3.8",
     "@solana/web3.js": "^1.87.0",
     "@sqds/multisig": "^1.10.0",

@@ -2,7 +2,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { transfer} from '@solana/spl-token';
 import { PublicKey } from '@solana/web3.js';
-import { transferSOL, decrypt, fetchMultisigAccount } from '@lunchboxfi/sdk/lib'
+import { transferSOL, decrypt, fetchMultisigAccount } from '@lunchboxfinance/sdk/lib'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { loadWalletKeypair } from '@/utils';
 import { verifyOwnership } from '../verify';
